@@ -9,36 +9,21 @@ feature baseline. Two ways to query:
 """
 
 import json
-import sys
-from pathlib import Path
-
 import numpy as np
-
-SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = next(
-    (candidate for candidate in [SCRIPT_DIR, *SCRIPT_DIR.parents] if (candidate / ".git").exists() or (candidate / "data").exists()),
-    SCRIPT_DIR,
-)
-SRC_DIR = REPO_ROOT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
 
 from tptp_parser import parse_fof_file
 from build_corpus import ast_to_dict
 from clause_features import extract_clause_features, vectorize
 from formula_printer import format_formula
 
-DATA_DIR = REPO_ROOT / "data" / "processed"
+DATA_DIR = "data/processed"
 
 
-def load_index():
-    vectors = np.load(DATA_DIR / "clause_vectors.npy")
-    with (DATA_DIR / "clause_metadata.json").open(encoding="utf-8") as f:
-        metadata = json.load(f)
-    with (DATA_DIR / "feature_vocab.json").open(encoding="utf-8") as f:
-        vocab_data = json.load(f)
-    with (DATA_DIR / "corpus.json").open(encoding="utf-8") as f:
-        corpus = json.load(f)
+def load_index(vectors_file="clause_vectors.npy"):
+    vectors = np.load(f"{DATA_DIR}/{vectors_file}")
+    metadata = json.load(open(f"{DATA_DIR}/clause_metadata.json"))
+    vocab_data = json.load(open(f"{DATA_DIR}/feature_vocab.json"))
+    corpus = json.load(open(f"{DATA_DIR}/corpus.json"))
 
     # rebuild a clause_id -> ast lookup so we can pretty-print any result
     ast_by_id = {}

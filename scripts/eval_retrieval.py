@@ -1,20 +1,14 @@
 import random
 import sys
-from collections import Counter
-from pathlib import Path
-
 import numpy as np
-
-REPO_ROOT = Path(__file__).resolve().parents[1]
-SRC_DIR = REPO_ROOT / "src"
-SRC_DIR_STR = str(SRC_DIR)
-if SRC_DIR_STR not in sys.path:
-    sys.path.insert(0, SRC_DIR_STR)
-
+from collections import Counter
 from retrieve import load_index, _topk_from_vector
 
+vectors_file = sys.argv[1] if len(sys.argv) > 1 else "clause_vectors.npy"
+print(f"Evaluating: {vectors_file}\n")
+
 random.seed(0)
-index = load_index()
+index = load_index(vectors_file)
 metadata = index["metadata"]
 n = len(metadata)
 k = 10
